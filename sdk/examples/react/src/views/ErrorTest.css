@@ -1,0 +1,46 @@
+.error-test {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.card h3 {
+  margin-bottom: 1rem;
+  color: #f56565;
+}
+
+pre {
+  background: #f7fafc;
+  padding: 1rem;
+  border-radius: 6px;
+  overflow-x: auto;
+  color: #e53e3e;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.error-boundary-fallback {
+  background: #fff5f5;
+  border: 2px solid #feb2b2;
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin-top: 1rem;
+  text-align: center;
+}
+
+.error-boundary-fallback h3 {
+  color: #c53030;
+  margin-bottom: 0.5rem;
+}
+
+.error-boundary-fallback p {
+  color: #742a2a;
+  margin-bottom: 0.5rem;
+}
+
+.error-note {
+  font-size: 0.875rem;
+  color: #667eea;
+  font-weight: 500;
+}
+

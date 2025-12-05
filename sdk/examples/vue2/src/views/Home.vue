@@ -1,0 +1,225 @@
+<template>
+  <div class="home">
+    <div class="card">
+      <h2>🏠 首页</h2>
+      <p>这是 Vue 2 监控 SDK 的测试页面。</p>
+      <p>监控 SDK 已自动初始化，正在监控以下内容：</p>
+      <ul class="feature-list">
+        <li>✅ JavaScript 错误</li>
+        <li>✅ Promise 错误</li>
+        <li>✅ Vue 组件错误</li>
+        <li>✅ 资源加载错误</li>
+        <li>✅ 页面性能指标</li>
+        <li>✅ 用户行为（PV、点击）</li>
+        <li>✅ API 请求监控</li>
+        <li>✅ 路由变化追踪</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>📊 测试功能</h2>
+      <div class="button-group">
+        <button @click="trackCustomEvent" class="btn btn-primary">
+          追踪自定义事件
+        </button>
+        <button @click="trackButtonClick" class="btn btn-primary">
+          追踪按钮点击
+        </button>
+        <button @click="testSuccessApi" class="btn btn-success">
+          测试成功 API 请求
+        </button>
+        <button @click="testApiRequest" class="btn btn-success">
+          测试外部 API 请求
+        </button>
+        <button @click="testErrorRequest" class="btn btn-danger">
+          测试错误请求
+        </button>
+        <button @click="testXHRRequest" class="btn btn-info">
+          测试 XMLHttpRequest
+        </button>
+        <button @click="testXHRError" class="btn btn-warning">
+          测试 XHR 错误请求
+        </button>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script>
+import monitor from '@monitor/vue';
+
+export default {
+  name: 'Home',
+  methods: {
+    trackCustomEvent() {
+      monitor.track('custom_event', {
+        action: 'click',
+        button: 'trackCustomEvent',
+        page: 'Home'
+      });
+      alert('自定义事件已追踪！');
+    },
+    trackButtonClick() {
+      monitor.track('button_click', {
+        buttonId: 'trackButtonClick',
+        buttonText: '追踪按钮点击',
+        timestamp: new Date().toISOString()
+      });
+      alert('按钮点击事件已追踪！');
+    },
+    async testSuccessApi() {
+      try {
+        const response = await fetch('http://localhost:3000/api/dashboard/overview');
+        if (response.ok) {
+          const data = await response.json();
+          alert('成功 API 请求已完成，已监控！');
+          console.log('API 响应:', data);
+        } else {
+          throw new Error('请求失败');
+        }
+      } catch (error) {
+        alert('请求失败，请确保后端服务正在运行');
+        console.error('API 请求错误:', error);
+      }
+    },
+    async testApiRequest() {
+      try {
+        const response = await fetch('https://api.github.com/users/octocat');
+        const data = await response.json();
+        alert('API 请求成功，已监控！');
+        console.log(data);
+      } catch (error) {
+        alert('API 请求失败');
+      }
+    },
+    testErrorRequest() {
+      fetch('https://nonexistent-domain-12345.com/api')
+        .catch(() => {
+          alert('错误请求已监控！');
+        });
+    },
+    testXHRRequest() {
+      const xhr = new XMLHttpRequest();
+      xhr.open('GET', 'https://api.github.com/users/octocat');
+      xhr.onload = function() {
+        if (xhr.status === 200) {
+          alert('XMLHttpRequest 请求成功，已监控！');
+          console.log(JSON.parse(xhr.responseText));
+        }
+      };
+      xhr.onerror = function() {
+        alert('XMLHttpRequest 请求失败，已监控！');
+      };
+      xhr.send();
+    },
+    testXHRError() {
+      const xhr = new XMLHttpRequest();
+      xhr.open('GET', 'https://nonexistent-domain-12345.com/api');
+      xhr.onerror = function() {
+        alert('XMLHttpRequest 错误请求已监控！');
+      };
+      xhr.send();
+    }
+  }
+};
+</script>
+
+<style scoped>
+.home {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.card {
+  background: white;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.card h2 {
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.card p {
+  margin-bottom: 15px;
+  color: #666;
+  line-height: 1.6;
+}
+
+.feature-list {
+  list-style: none;
+  padding: 0;
+  margin-top: 20px;
+}
+
+.feature-list li {
+  padding: 8px 0;
+  color: #555;
+  font-size: 14px;
+}
+
+.button-group {
+  display: flex;
+  gap: 15px;
+  flex-wrap: wrap;
+}
+
+.btn {
+  padding: 12px 24px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.3s;
+}
+
+.btn-primary {
+  background: #667eea;
+  color: white;
+}
+
+.btn-primary:hover {
+  background: #5a6fd6;
+}
+
+.btn-success {
+  background: #48bb78;
+  color: white;
+}
+
+.btn-success:hover {
+  background: #38a169;
+}
+
+.btn-danger {
+  background: #f56565;
+  color: white;
+}
+
+.btn-danger:hover {
+  background: #e53e3e;
+}
+
+.btn-info {
+  background: #4299e1;
+  color: white;
+}
+
+.btn-info:hover {
+  background: #3182ce;
+}
+
+.btn-warning {
+  background: #ed8936;
+  color: white;
+}
+
+.btn-warning:hover {
+  background: #dd6b20;
+}
+</style>
+

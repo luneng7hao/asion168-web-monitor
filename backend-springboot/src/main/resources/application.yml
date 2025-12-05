@@ -1,0 +1,66 @@
+server:
+  port: 3001
+  servlet:
+    context-path: /api
+
+spring:
+  application:
+    name: monitor-backend-springboot
+  
+  # MongoDB 配置
+  data:
+    mongodb:
+      uri: mongodb://localhost:27017/monitor
+      database: monitor
+    # Redis 配置
+    redis:
+      host: localhost
+      port: 6379
+      password: 
+      database: 0
+      timeout: 2000ms
+      lettuce:
+        pool:
+          max-active: 8
+          max-idle: 8
+          min-idle: 0
+
+# InfluxDB 配置
+influxdb:
+  url: http://localhost:8086
+  token: 
+  org: 
+  bucket: monitor
+  database: monitor
+
+# 缓存配置
+cache:
+  stats-ttl: 60
+  dashboard-ttl: 30
+  project-ttl: 300
+
+# Elasticsearch 配置
+elasticsearch:
+  node: http://localhost:9200
+  username: 
+  password: 
+
+# 默认项目ID（单项目模式）
+default-project-id: "001"
+
+# SpringDoc OpenAPI 配置
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    enabled: true
+
+# 日志配置
+logging:
+  level:
+    root: INFO
+    com.monitor: DEBUG
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+

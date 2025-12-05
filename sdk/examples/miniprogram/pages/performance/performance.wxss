@@ -1,0 +1,3 @@
+/* pages/performance/performance.wxss */
+@import '../index/index.wxss';
+

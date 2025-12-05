@@ -1,0 +1,102 @@
+version: '3.8'
+
+services:
+  # MongoDB
+  mongodb:
+    image: mongo:6.0
+    container_name: monitor-mongodb
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+    environment:
+      - MONGO_INITDB_DATABASE=monitor
+    networks:
+      - monitor-network
+
+  # InfluxDB (使用 2.x 版本)
+  influxdb:
+    image: influxdb:2.7-alpine
+    container_name: monitor-influxdb
+    ports:
+      - "8086:8086"
+    volumes:
+      - influxdb_data:/var/lib/influxdb2
+    environment:
+      - DOCKER_INFLUXDB_INIT_MODE=setup
+      - DOCKER_INFLUXDB_INIT_USERNAME=admin
+      - DOCKER_INFLUXDB_INIT_PASSWORD=admin123
+      - DOCKER_INFLUXDB_INIT_ORG=monitor
+      - DOCKER_INFLUXDB_INIT_BUCKET=monitor
+      - DOCKER_INFLUXDB_INIT_ADMIN_TOKEN=monitor-token-123456
+    networks:
+      - monitor-network
+
+  # Redis
+  redis:
+    image: redis:7-alpine
+    container_name: monitor-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    command: redis-server --appendonly yes
+    networks:
+      - monitor-network
+
+  # Elasticsearch
+  elasticsearch:
+    image: elasticsearch:8.11.0
+    container_name: monitor-elasticsearch
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    volumes:
+      - elasticsearch_data:/usr/share/elasticsearch/data
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:9200 || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    networks:
+      - monitor-network
+
+  # Spring Boot 应用
+  springboot-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: monitor-springboot
+    ports:
+      - "3001:3001"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    depends_on:
+      mongodb:
+        condition: service_started
+      influxdb:
+        condition: service_started
+      redis:
+        condition: service_started
+      elasticsearch:
+        condition: service_healthy
+    networks:
+      - monitor-network
+    volumes:
+      # 挂载日志目录（可选）
+      - ./logs:/app/logs
+
+volumes:
+  mongodb_data:
+  influxdb_data:
+  redis_data:
+  elasticsearch_data:
+
+networks:
+  monitor-network:
+    driver: bridge
+
