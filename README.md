@@ -8,8 +8,6 @@
 
 一个完整的前端监控解决方案，支持错误监控、性能分析、用户行为追踪和接口监控。
 
-[English](./README.en.md) | 中文
-
 </div>
 
 ## ✨ 特性
@@ -322,7 +320,7 @@ ELASTICSEARCH_NODE=http://localhost:9200
 
 ### 贡献方式
 
-1. **报告问题** - 在 [Issues](https://github.com/your-username/Asion168-web-monitor/issues) 中报告 Bug 或提出功能建议
+1. **报告问题** - 在 [Issues](https://github.com/luneng17hao/asion168-web-monitor/issues) 中报告 Bug 或提出功能建议
 2. **提交代码** - Fork 项目，创建功能分支，提交 Pull Request
 3. **改进文档** - 帮助完善文档和示例代码
 4. **分享使用经验** - 在 Discussions 中分享使用心得
@@ -384,9 +382,9 @@ A: SDK 支持所有现代浏览器（Chrome、Firefox、Safari、Edge 等），�
 
 ## 📮 联系方式
 
-- 项目地址: [GitHub](https://github.com/your-username/Asion168-web-monitor)
-- 问题反馈: [Issues](https://github.com/your-username/Asion168-web-monitor/issues)
-- 讨论区: [Discussions](https://github.com/your-username/Asion168-web-monitor/discussions)
+- 项目地址: [Gitee](https://gitee.com/luneng17hao/asion168-web-monitor)
+- 问题反馈: [Issues](https://gitee.com/luneng17hao/asion168-web-monitor/issues)
+- 讨论区: [Pull Requests](https://gitee.com/luneng17hao/asion168-web-monitor/pulls)
 
 ---
 

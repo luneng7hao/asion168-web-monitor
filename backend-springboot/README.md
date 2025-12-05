@@ -254,7 +254,59 @@ backend-springboot/
 4. 添加告警功能
 5. 实现数据清理策略
 
-## 许可证
+## 📚 相关文档
+
+- [项目主文档](../README.md)
+- [MidwayJS 后端文档](../backend-midway/README.md)
+- [SDK 文档](../sdk/README.md)
+- [前端文档](../frontend/README.md)
+
+## 🐛 问题排查
+
+### MongoDB 连接失败
+
+检查 MongoDB 是否启动：
+```bash
+docker ps | grep mongo
+# 或
+mongosh mongodb://localhost:27017/monitor
+```
+
+### InfluxDB 连接失败
+
+检查 InfluxDB 是否启动：
+```bash
+curl http://localhost:8086/ping
+```
+
+### Redis 连接失败
+
+检查 Redis 是否启动：
+```bash
+redis-cli ping
+```
+
+### Elasticsearch 连接失败
+
+检查 Elasticsearch 是否启动：
+```bash
+curl http://localhost:9200
+```
+
+### 编译错误
+
+如果遇到编译错误，请检查：
+1. Java 版本是否为 17 或更高
+2. Maven 依赖是否正确下载
+3. 查看详细错误信息：`mvn clean compile -X`
+
+## 📄 许可证
 
 MIT
+
+## 🔗 相关链接
+
+- [项目主页](https://gitee.com/luneng17hao/asion168-web-monitor)
+- [问题反馈](https://gitee.com/luneng17hao/asion168-web-monitor/issues)
+- [贡献指南](../CONTRIBUTING.md)
 

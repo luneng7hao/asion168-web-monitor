@@ -44,6 +44,6 @@
 
 ---
 
-[Unreleased]: https://github.com/your-username/Asion168-web-monitor/compare/v1.0.0...HEAD
-[1.0.0]: https://github.com/your-username/Asion168-web-monitor/releases/tag/v1.0.0
+[Unreleased]: https://gitee.com/luneng17hao/asion168-web-monitor/compare/v1.0.0...HEAD
+[1.0.0]: https://gitee.com/luneng17hao/asion168-web-monitor/releases/v1.0.0
 

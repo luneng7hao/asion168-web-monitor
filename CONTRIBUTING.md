@@ -6,7 +6,7 @@
 
 ### 报告问题
 
-如果您发现了 Bug 或有功能建议，请在 [GitHub Issues](https://github.com/your-username/Asion168-web-monitor/issues) 中提交。
+如果您发现了 Bug 或有功能建议，请在 [Gitee Issues](https://gitee.com/luneng17hao/asion168-web-monitor/issues) 中提交。
 
 提交 Issue 时，请包含：
 - 清晰的问题描述
@@ -25,8 +25,8 @@
 
 2. **克隆 Fork 的仓库**
    ```bash
-   git clone https://github.com/your-username/Asion168-web-monitor.git
-   cd Asion168-web-monitor
+   git clone https://gitee.com/your-username/asion168-web-monitor.git
+   cd asion168-web-monitor
    ```
 
 3. **创建功能分支**
@@ -62,7 +62,7 @@
    ```
 
 7. **创建 Pull Request**
-   - 在 GitHub 上创建 Pull Request
+   - 在 Gitee 上创建 Pull Request
    - 填写清晰的 PR 描述
    - 关联相关的 Issue（如果有）
 
@@ -166,8 +166,8 @@ npm run test
 
 如果您在贡献过程中遇到任何问题，请：
 
-1. 查看 [Issues](https://github.com/your-username/Asion168-web-monitor/issues)
-2. 在 [Discussions](https://github.com/your-username/Asion168-web-monitor/discussions) 中提问
+1. 查看 [Issues](https://gitee.com/luneng17hao/asion168-web-monitor/issues)
+2. 在 [Pull Requests](https://gitee.com/luneng17hao/asion168-web-monitor/pulls) 中提问
 3. 联系项目维护者
 
 感谢您的贡献！🎉
