@@ -20,8 +20,7 @@
 | React | `src/react.ts` | React 应用 | ✅ |
 | Svelte | `src/svelte.ts` | Svelte/SvelteKit 应用 | ✅ |
 | 微信小程序 | `src/miniprogram.ts` | 微信小程序 | ✅ |
-| PHP | `examples/php/` | PHP 服务端上报 | ✅ |
-| JSP | `examples/jsp/` | JSP 服务端上报 | ✅ |
+| Web | `src/index.ts` | 适用于 HTML、JSP、PHP 等传统 Web 应用 | ✅ |
 
 ## 🚀 快速开始
 
@@ -152,35 +151,96 @@ MiniProgramMonitor.init({
 })
 ```
 
-### PHP 服务端上报
+### 传统 Web 应用（HTML、JSP、PHP 等）
 
-```php
-<?php
-require_once 'monitor-sdk.php';
+对于传统的多页面应用（HTML、JSP、PHP 等），可以使用 Web SDK：
 
-$monitor = new Monitor([
-    'apiUrl' => 'http://localhost:3000/api',
-    'projectId' => '001'
-]);
+**HTML 示例**：
 
-// 上报错误
-$monitor->reportError([
-    'type' => 'php',
-    'message' => 'Error message',
-    'file' => __FILE__,
-    'line' => __LINE__
-]);
-?>
+```html
+<!DOCTYPE html>
+<html>
+<head>
+    <title>我的页面</title>
+</head>
+<body>
+    <!-- 页面内容 -->
+    
+    <!-- 引入监控 SDK -->
+    <script type="module">
+        import Monitor from '@monitor/index.ts';
+        
+        const monitor = new Monitor({
+            apiUrl: 'http://localhost:3000/api',
+            projectId: '001',
+            userId: 'user-001',
+            enableError: true,
+            enablePerformance: true,
+            enableBehavior: true,
+            enableApi: true
+        });
+    </script>
+</body>
+</html>
 ```
 
-### JSP 服务端上报
+**JSP 示例**：
 
 ```jsp
-<%@ page import="com.monitor.Monitor" %>
-<%
-Monitor monitor = new Monitor("http://localhost:3000/api", "001");
-monitor.reportError("Error message", request);
-%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+    <title>我的页面</title>
+</head>
+<body>
+    <!-- 页面内容 -->
+    
+    <!-- 引入监控 SDK -->
+    <script type="module">
+        import Monitor from '/js/monitor/index.js';
+        
+        const monitor = new Monitor({
+            apiUrl: 'http://localhost:3000/api',
+            projectId: '001',
+            userId: '<%= session.getAttribute("userId") %>',
+            enableError: true,
+            enablePerformance: true,
+            enableBehavior: true,
+            enableApi: true
+        });
+    </script>
+</body>
+</html>
+```
+
+**PHP 示例**：
+
+```php
+<!DOCTYPE html>
+<html>
+<head>
+    <title>我的页面</title>
+</head>
+<body>
+    <!-- 页面内容 -->
+    
+    <!-- 引入监控 SDK -->
+    <script type="module">
+        import Monitor from '/js/monitor/index.js';
+        
+        const monitor = new Monitor({
+            apiUrl: 'http://localhost:3000/api',
+            projectId: '001',
+            userId: '<?php echo $userId; ?>',
+            enableError: true,
+            enablePerformance: true,
+            enableBehavior: true,
+            enableApi: true
+        });
+    </script>
+</body>
+</html>
 ```
 
 ## 📖 API 参考
@@ -289,8 +349,7 @@ enableApi: false,
 - `examples/react/` - React 示例
 - `examples/svelte/` - Svelte 示例
 - `examples/miniprogram/` - 微信小程序示例
-- `examples/php/` - PHP 服务端上报示例
-- `examples/jsp/` - JSP 服务端上报示例
+- `examples/web/` - 传统 Web 应用示例（适用于 HTML、JSP、PHP 等）
 
 运行示例：
 

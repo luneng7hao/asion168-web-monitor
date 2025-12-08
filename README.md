@@ -42,13 +42,11 @@
 
 ### SDK 支持
 
-- ✅ Web (原生 JavaScript)
+- ✅ Web (原生 JavaScript，适用于 HTML、JSP、PHP 等传统 Web 应用)
 - ✅ 微信小程序
 - ✅ React
 - ✅ Vue 2/3
 - ✅ Svelte
-- ✅ PHP (服务端上报)
-- ✅ JSP (服务端上报)
 
 ## 📦 项目结构
 

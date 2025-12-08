@@ -42,13 +42,11 @@ A complete frontend monitoring solution with error tracking, performance analysi
 
 ### SDK Support
 
-- ✅ Web (Native JavaScript)
+- ✅ Web (Native JavaScript, suitable for HTML, JSP, PHP and other traditional web applications)
 - ✅ WeChat Mini Program
 - ✅ React
 - ✅ Vue 2/3
 - ✅ Svelte
-- ✅ PHP (Server-side reporting)
-- ✅ JSP (Server-side reporting)
 
 ## 📦 Project Structure
 
