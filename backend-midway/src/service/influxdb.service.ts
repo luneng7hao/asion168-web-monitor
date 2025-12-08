@@ -183,6 +183,9 @@ export class InfluxDBService {
   /**
    * 写入接口监控数据
    */
+  /**
+   * 写入接口监控数据
+   */
   async writeApiMonitor(data: {
     projectId: string;
     url: string;
@@ -194,7 +197,12 @@ export class InfluxDBService {
     requestData?: any;
     responseData?: any;
   }) {
-    if (!this.isConnected()) return;
+    if (!this.isConnected()) {
+      if (process.env.NODE_ENV === 'local' || process.env.NODE_ENV === 'development') {
+        console.warn('⚠️ InfluxDB not connected, cannot write API monitor data');
+      }
+      return;
+    }
     
     const point: IPoint = {
       measurement: 'api_monitor',
@@ -214,7 +222,19 @@ export class InfluxDBService {
       },
     };
 
-    await this.client.writePoints([point]);
+    try {
+      await this.client.writePoints([point]);
+      if (process.env.NODE_ENV === 'local' || process.env.NODE_ENV === 'development') {
+        console.log('✅ InfluxDB writeApiMonitor success:', {
+          projectId: data.projectId,
+          url: data.url,
+          method: data.method
+        });
+      }
+    } catch (error: any) {
+      console.error('❌ InfluxDB writeApiMonitor failed:', error.message);
+      throw error;
+    }
   }
 
   /**

@@ -10,7 +10,7 @@ const app = createApp(App);
 app.use(Vue3Plugin, {
   router,
   config: {
-    apiUrl: 'http://localhost:3001/api',
+    apiUrl: 'http://localhost:3000/api',  // 修复：后端运行在 3000 端口
     projectId: '001',
     userId: 'vue3-user-001',
     enableError: true,

@@ -37,9 +37,17 @@ export class ApiMonitorController {
 
   private async handleReport(body: any) {
     try {
-      // 调试日志：检查 userId 是否正确传递
-      if (body.userId) {
-        console.log('API monitor report - userId:', body.userId, 'url:', body.url);
+      // 调试日志：记录接收到的数据
+      if (process.env.NODE_ENV === 'local' || process.env.NODE_ENV === 'development') {
+        console.log('📥 API monitor report received:', {
+          projectId: body.projectId,
+          defaultProjectId: this.defaultProjectId,
+          url: body.url,
+          method: body.method,
+          status: body.status,
+          userId: body.userId,
+          sessionId: body.sessionId
+        });
       }
       
       await this.apiMonitorService.report({
@@ -53,6 +61,11 @@ export class ApiMonitorController {
         requestData: body.requestData,
         responseData: body.responseData,
       });
+      
+      // 调试日志：记录数据上报成功
+      if (process.env.NODE_ENV === 'local' || process.env.NODE_ENV === 'development') {
+        console.log('✅ API monitor report saved successfully');
+      }
 
       // 异步写入 Elasticsearch（不阻塞主流程）
       this.elasticsearchService.writeLog({

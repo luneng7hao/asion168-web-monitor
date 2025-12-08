@@ -151,15 +151,16 @@ export class ElasticsearchService {
         body: doc,
       });
       
-      // 仅在开发环境记录详细日志，生产环境减少日志输出
-      if (process.env.NODE_ENV === 'local' || process.env.NODE_ENV === 'development') {
-        console.log('✅ Log written to Elasticsearch:', { 
-          type: data.type, 
-          projectId: data.projectId, 
-          userId: data.userId,
-          _id: result._id,
-        });
-      }
+      // 完全禁用详细日志，避免日志刷屏
+      // 如需调试，可以临时启用
+      // if (process.env.NODE_ENV === 'local' || process.env.NODE_ENV === 'development') {
+      //   console.log('✅ Log written to Elasticsearch:', { 
+      //     type: data.type, 
+      //     projectId: data.projectId, 
+      //     userId: data.userId,
+      //     _id: result._id,
+      //   });
+      // }
     } catch (error: any) {
       console.error('❌ Elasticsearch write error:', error.message || error);
       // 在错误处理中，doc 可能未定义，所以使用 data
@@ -239,7 +240,10 @@ export class ElasticsearchService {
         range.lte = endTime;
       }
       must.push({ range: { '@timestamp': range } });
-      console.log('⏰ Time range filter:', range);
+      // 仅在开发环境打印调试日志
+      if (process.env.NODE_ENV === 'local' || process.env.NODE_ENV === 'development') {
+        console.log('⏰ Time range filter:', range);
+      }
     } else {
       // 如果没有指定时间范围，默认查询最近7天，截止到当前时间
       const defaultEndTime = new Date().toISOString();
@@ -252,7 +256,10 @@ export class ElasticsearchService {
           } 
         } 
       });
-      console.log('⏰ Using default time range (last 7 days):', { gte: defaultStartTime, lte: defaultEndTime });
+      // 仅在开发环境打印调试日志
+      if (process.env.NODE_ENV === 'local' || process.env.NODE_ENV === 'development') {
+        console.log('⏰ Using default time range (last 7 days):', { gte: defaultStartTime, lte: defaultEndTime });
+      }
     }
 
     // 关键字搜索（全文搜索）
@@ -281,18 +288,20 @@ export class ElasticsearchService {
     }
 
     try {
-      // 调试：输出查询条件
-      console.log('🔍 Elasticsearch search params:', {
-        projectId,
-        userId,
-        type,
-        keyword,
-        startTime,
-        endTime,
-        page,
-        pageSize
-      });
-      console.log('🔍 Elasticsearch query:', JSON.stringify(query, null, 2));
+      // 仅在开发环境打印调试日志
+      if (process.env.NODE_ENV === 'local' || process.env.NODE_ENV === 'development') {
+        console.log('🔍 Elasticsearch search params:', {
+          projectId,
+          userId,
+          type,
+          keyword,
+          startTime,
+          endTime,
+          page,
+          pageSize
+        });
+        console.log('🔍 Elasticsearch query:', JSON.stringify(query, null, 2));
+      }
       
       // 先检查索引是否存在（使用 try-catch 处理连接错误）
       let indexExists = false;
@@ -348,16 +357,19 @@ export class ElasticsearchService {
         ? (result.hits.total as any).value 
         : result.hits.total;
 
-      console.log('📊 Elasticsearch search result:', {
-        total: totalValue,
-        hitsCount: hits.length,
-        firstHit: hits[0] ? { 
-          type: hits[0].type, 
-          timestamp: hits[0]['@timestamp'],
-          userId: hits[0].userId,
-          projectId: hits[0].projectId
-        } : null,
-      });
+      // 仅在开发环境打印调试日志
+      if (process.env.NODE_ENV === 'local' || process.env.NODE_ENV === 'development') {
+        console.log('📊 Elasticsearch search result:', {
+          total: totalValue,
+          hitsCount: hits.length,
+          firstHit: hits[0] ? { 
+            type: hits[0].type, 
+            timestamp: hits[0]['@timestamp'],
+            userId: hits[0].userId,
+            projectId: hits[0].projectId
+          } : null,
+        });
+      }
 
       return {
         total: totalValue || 0,

@@ -23,26 +23,37 @@ export class CacheService {
    * 获取缓存
    */
   async get<T>(key: string): Promise<T | null> {
-    const data = await this.redisService.get(this.PREFIX + key);
-    if (data) {
-      try {
-        return JSON.parse(data);
-      } catch {
-        return data as unknown as T;
+    try {
+      const data = await this.redisService.get(this.PREFIX + key);
+      if (data) {
+        try {
+          return JSON.parse(data);
+        } catch {
+          return data as unknown as T;
+        }
       }
+      return null;
+    } catch (error: any) {
+      // Redis 连接失败时返回 null，不影响主流程
+      console.warn('⚠️ Redis get failed:', error.message);
+      return null;
     }
-    return null;
   }
 
   /**
    * 设置缓存
    */
   async set(key: string, value: any, ttl?: number): Promise<void> {
-    const data = typeof value === 'string' ? value : JSON.stringify(value);
-    if (ttl) {
-      await this.redisService.setex(this.PREFIX + key, ttl, data);
-    } else {
-      await this.redisService.set(this.PREFIX + key, data);
+    try {
+      const data = typeof value === 'string' ? value : JSON.stringify(value);
+      if (ttl) {
+        await this.redisService.setex(this.PREFIX + key, ttl, data);
+      } else {
+        await this.redisService.set(this.PREFIX + key, data);
+      }
+    } catch (error: any) {
+      // Redis 连接失败时静默失败，不影响主流程
+      console.warn('⚠️ Redis set failed:', error.message);
     }
   }
 
@@ -50,7 +61,12 @@ export class CacheService {
    * 删除缓存
    */
   async del(key: string): Promise<void> {
-    await this.redisService.del(this.PREFIX + key);
+    try {
+      await this.redisService.del(this.PREFIX + key);
+    } catch (error: any) {
+      // Redis 连接失败时静默失败，不影响主流程
+      console.warn('⚠️ Redis del failed:', error.message);
+    }
   }
 
   /**
@@ -122,34 +138,50 @@ export class CacheService {
    * 实时计数 - 今日错误数
    */
   async incrTodayErrorCount(projectId: string): Promise<number> {
-    const key = `error:today:${projectId}:${this.getTodayKey()}`;
-    const count = await this.redisService.incr(this.PREFIX + key);
-    // 设置过期时间为明天凌晨
-    await this.redisService.expireat(
-      this.PREFIX + key,
-      Math.floor(this.getTomorrowTimestamp() / 1000)
-    );
-    return count;
+    try {
+      const key = `error:today:${projectId}:${this.getTodayKey()}`;
+      const count = await this.redisService.incr(this.PREFIX + key);
+      // 设置过期时间为明天凌晨
+      await this.redisService.expireat(
+        this.PREFIX + key,
+        Math.floor(this.getTomorrowTimestamp() / 1000)
+      );
+      return count;
+    } catch (error: any) {
+      // Redis 连接失败时返回 0，不影响主流程
+      console.warn('⚠️ Redis incrTodayErrorCount failed:', error.message);
+      return 0;
+    }
   }
 
   async getTodayErrorCount(projectId: string): Promise<number> {
-    const key = `error:today:${projectId}:${this.getTodayKey()}`;
-    const count = await this.redisService.get(this.PREFIX + key);
-    return parseInt(count || '0', 10);
+    try {
+      const key = `error:today:${projectId}:${this.getTodayKey()}`;
+      const count = await this.redisService.get(this.PREFIX + key);
+      return parseInt(count || '0', 10);
+    } catch (error: any) {
+      console.warn('⚠️ Redis getTodayErrorCount failed:', error.message);
+      return 0;
+    }
   }
 
   /**
    * 增加今日指定类型的错误计数
    */
   async incrTodayErrorCountByType(projectId: string, type: string): Promise<number> {
-    const key = `error:today:${projectId}:${type}:${this.getTodayKey()}`;
-    const count = await this.redisService.incr(this.PREFIX + key);
-    // 设置过期时间为明天凌晨
-    await this.redisService.expireat(
-      this.PREFIX + key,
-      Math.floor(this.getTomorrowTimestamp() / 1000)
-    );
-    return count;
+    try {
+      const key = `error:today:${projectId}:${type}:${this.getTodayKey()}`;
+      const count = await this.redisService.incr(this.PREFIX + key);
+      // 设置过期时间为明天凌晨
+      await this.redisService.expireat(
+        this.PREFIX + key,
+        Math.floor(this.getTomorrowTimestamp() / 1000)
+      );
+      return count;
+    } catch (error: any) {
+      console.warn('⚠️ Redis incrTodayErrorCountByType failed:', error.message);
+      return 0;
+    }
   }
 
   /**
@@ -184,32 +216,55 @@ export class CacheService {
    * 实时计数 - 今日 UV（使用 HyperLogLog）
    */
   async addTodayUV(projectId: string, sessionId: string): Promise<void> {
-    const key = `uv:today:${projectId}:${this.getTodayKey()}`;
-    await this.redisService.pfadd(this.PREFIX + key, sessionId);
-    await this.redisService.expireat(
-      this.PREFIX + key,
-      Math.floor(this.getTomorrowTimestamp() / 1000)
-    );
+    try {
+      const key = `uv:today:${projectId}:${this.getTodayKey()}`;
+      await this.redisService.pfadd(this.PREFIX + key, sessionId);
+      await this.redisService.expireat(
+        this.PREFIX + key,
+        Math.floor(this.getTomorrowTimestamp() / 1000)
+      );
+    } catch (error: any) {
+      // Redis 连接失败时静默失败，不影响主流程
+      console.warn('⚠️ Redis addTodayUV failed:', error.message);
+    }
   }
 
   async getTodayUV(projectId: string): Promise<number> {
-    const key = `uv:today:${projectId}:${this.getTodayKey()}`;
-    return this.redisService.pfcount(this.PREFIX + key);
+    try {
+      const key = `uv:today:${projectId}:${this.getTodayKey()}`;
+      return await this.redisService.pfcount(this.PREFIX + key);
+    } catch (error: any) {
+      // Redis 连接失败时返回 0
+      console.warn('⚠️ Redis getTodayUV failed:', error.message);
+      return 0;
+    }
   }
 
   /**
    * 错误受影响用户管理（使用 Redis Set）
    */
   async addToUserSet(key: string, userId: string): Promise<boolean> {
-    const result = await this.redisService.sadd(this.PREFIX + key, userId);
-    // 设置过期时间为 30 天
-    await this.redisService.expire(this.PREFIX + key, 30 * 24 * 60 * 60);
-    // 返回是否是新用户（result > 0 表示添加成功，即新用户）
-    return result > 0;
+    try {
+      const result = await this.redisService.sadd(this.PREFIX + key, userId);
+      // 设置过期时间为 30 天
+      await this.redisService.expire(this.PREFIX + key, 30 * 24 * 60 * 60);
+      // 返回是否是新用户（result > 0 表示添加成功，即新用户）
+      return result > 0;
+    } catch (error: any) {
+      // Redis 连接失败时返回 false，不影响主流程
+      console.warn('⚠️ Redis addToUserSet failed:', error.message);
+      return false;
+    }
   }
 
   async getUserSetSize(key: string): Promise<number> {
-    return this.redisService.scard(this.PREFIX + key);
+    try {
+      return await this.redisService.scard(this.PREFIX + key);
+    } catch (error: any) {
+      // Redis 连接失败时返回 0
+      console.warn('⚠️ Redis getUserSetSize failed:', error.message);
+      return 0;
+    }
   }
 
   /**

@@ -49,18 +49,20 @@ export class LogController {
       finalEndTime = new Date(finalEndTime).toISOString();
     }
 
-    // 调试日志
-    console.log('🔍 Log search params:', {
-      projectId: this.defaultProjectId,
-      userId,
-      type,
-      keyword,
-      startTime: finalStartTime,
-      endTime: finalEndTime,
-      page: parseInt(page) || 1,
-      pageSize: parseInt(pageSize) || 20,
-      isConnected: this.elasticsearchService.isConnected(),
-    });
+    // 仅在开发环境打印调试日志
+    if (process.env.NODE_ENV === 'local' || process.env.NODE_ENV === 'development') {
+      console.log('🔍 Log search params:', {
+        projectId: this.defaultProjectId,
+        userId,
+        type,
+        keyword,
+        startTime: finalStartTime,
+        endTime: finalEndTime,
+        page: parseInt(page) || 1,
+        pageSize: parseInt(pageSize) || 20,
+        isConnected: this.elasticsearchService.isConnected(),
+      });
+    }
 
     const result = await this.elasticsearchService.searchLogs({
       projectId: this.defaultProjectId,
@@ -73,11 +75,14 @@ export class LogController {
       pageSize: parseInt(pageSize) || 20,
     });
 
-    console.log('📊 Log search result:', {
-      total: result.total,
-      hitsCount: result.hits.length,
-      isConnected: this.elasticsearchService.isConnected(),
-    });
+    // 仅在开发环境打印调试日志
+    if (process.env.NODE_ENV === 'local' || process.env.NODE_ENV === 'development') {
+      console.log('📊 Log search result:', {
+        total: result.total,
+        hitsCount: result.hits.length,
+        isConnected: this.elasticsearchService.isConnected(),
+      });
+    }
     
     // 如果未连接，返回提示信息
     if (!this.elasticsearchService.isConnected()) {

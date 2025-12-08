@@ -24,11 +24,27 @@ export class ApiMonitorService {
     requestData?: any;
     responseData?: any;
   }): Promise<void> {
+    // 调试日志：记录数据上报
+    if (process.env.NODE_ENV === 'local' || process.env.NODE_ENV === 'development') {
+      console.log('📊 ApiMonitorService.report:', {
+        projectId: data.projectId,
+        url: data.url,
+        method: data.method,
+        status: data.status,
+        responseTime: data.responseTime
+      });
+    }
+    
     await this.influxDBService.writeApiMonitor(data);
 
     // 清除统计缓存
     await this.cacheService.del(`api:stats:${data.projectId}`);
     await this.cacheService.del(`dashboard:${data.projectId}`);
+    
+    // 调试日志：记录数据写入成功
+    if (process.env.NODE_ENV === 'local' || process.env.NODE_ENV === 'development') {
+      console.log('✅ ApiMonitorService.report completed');
+    }
   }
 
   /**

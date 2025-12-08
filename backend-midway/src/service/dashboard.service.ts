@@ -66,13 +66,15 @@ export class DashboardService {
       // 获取今日错误类型统计（只统计js和promise）
       const todayTypeStats = await this.errorService.getTodayTypeStats(projectId);
       
-      // 调试日志
-      console.log('Dashboard overview - error type stats:', {
-        projectId,
-        todayErrorCount,
-        todayTypeStats,
-        errorStatsTypeStats: errorStats.typeStats
-      });
+      // 仅在开发环境打印调试日志
+      if (process.env.NODE_ENV === 'local' || process.env.NODE_ENV === 'development') {
+        console.log('Dashboard overview - error type stats:', {
+          projectId,
+          todayErrorCount,
+          todayTypeStats,
+          errorStatsTypeStats: errorStats.typeStats
+        });
+      }
 
       const overview = {
         errors: {
