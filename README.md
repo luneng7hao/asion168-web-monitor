@@ -102,6 +102,7 @@ Asion168-web-monitor/
 ```bash
 # 克隆项目
 git clone https://gitee.com/luneng17hao/asion168-web-monitor.git
+或 git clone https://github.com/luneng7hao/asion168-web-monitor.git
 cd asion168-web-monitor
 
 # 启动后端服务（包含数据库）
