@@ -1,0 +1,3 @@
+/* pages/error-test/error-test.wxss */
+@import '../index/index.wxss';
+

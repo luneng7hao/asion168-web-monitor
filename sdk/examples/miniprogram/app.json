@@ -1,0 +1,39 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/about/about",
+    "pages/error-test/error-test",
+    "pages/performance/performance"
+  ],
+  "window": {
+    "backgroundTextStyle": "light",
+    "navigationBarBackgroundColor": "#ff6b6b",
+    "navigationBarTitleText": "微信小程序监控测试",
+    "navigationBarTextStyle": "white"
+  },
+  "tabBar": {
+    "color": "#666",
+    "selectedColor": "#ff6b6b",
+    "backgroundColor": "#fff",
+    "list": [
+      {
+        "pagePath": "pages/index/index",
+        "text": "首页"
+      },
+      {
+        "pagePath": "pages/about/about",
+        "text": "关于"
+      },
+      {
+        "pagePath": "pages/error-test/error-test",
+        "text": "错误测试"
+      },
+      {
+        "pagePath": "pages/performance/performance",
+        "text": "性能测试"
+      }
+    ]
+  },
+  "sitemapLocation": "sitemap.json"
+}
+

@@ -1,0 +1,14 @@
+{
+  "name": "web-monitor-example",
+  "version": "1.0.0",
+  "description": "通用 Web 监控 SDK 测试工程",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "vite": "^5.0.0"
+  }
+}
+

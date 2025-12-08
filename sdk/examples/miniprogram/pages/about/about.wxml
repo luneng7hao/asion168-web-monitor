@@ -1,0 +1,10 @@
+<!--pages/about/about.wxml-->
+<view class="container">
+  <view class="header">
+    <text class="title">ℹ️ 关于</text>
+  </view>
+  <view class="card">
+    <text>这是微信小程序监控 SDK 的测试工程。</text>
+  </view>
+</view>
+

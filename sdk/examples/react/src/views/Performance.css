@@ -1,0 +1,34 @@
+.performance {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.metrics {
+  background: #f7fafc;
+  padding: 1.5rem;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+}
+
+.metric-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.metric-item:last-child {
+  border-bottom: none;
+}
+
+.metric-item label {
+  font-weight: 500;
+  color: #4a5568;
+}
+
+.metric-item span {
+  color: #667eea;
+  font-weight: 600;
+}
+

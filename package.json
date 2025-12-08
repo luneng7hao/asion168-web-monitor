@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "@midwayjs/swagger": "^3.20.17",
+    "swagger-ui-dist": "^5.30.3"
+  }
+}

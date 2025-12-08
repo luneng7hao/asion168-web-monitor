@@ -1,0 +1,35 @@
+<!--pages/error-test/error-test.wxml-->
+<view class="container">
+  <view class="header">
+    <text class="title">🐛 错误测试</text>
+  </view>
+
+  <view class="card">
+    <view class="card-title">错误监控测试</view>
+    <button class="btn btn-danger" bindtap="triggerJsError">触发 JS 错误</button>
+    <button class="btn btn-danger" bindtap="triggerPromiseError">触发 Promise 错误</button>
+    <button class="btn btn-danger" bindtap="triggerResourceError">触发资源加载错误</button>
+    <button class="btn btn-danger" bindtap="captureManualError">手动捕获错误</button>
+  </view>
+
+  <!-- 用于触发资源加载错误的隐藏图片 -->
+  <image 
+    wx:if="{{showTestImage}}" 
+    src="{{testImageUrl}}" 
+    style="display: none;"
+    binderror="onImageError"
+  />
+
+  <view class="card">
+    <view class="card-title">📋 操作日志</view>
+    <view class="log-area">
+      <view class="log-item" wx:for="{{logs}}" wx:key="index">
+        <text class="log-time">[{{item.time}}]</text>
+        <text class="log-type">[{{item.type}}]</text>
+        <text>{{item.message}}</text>
+      </view>
+      <view wx:if="{{logs.length === 0}}" class="log-empty">暂无日志</view>
+    </view>
+  </view>
+</view>
+
