@@ -1,0 +1,18 @@
+# PHP 测试工程 .gitignore
+
+# 临时文件
+*.tmp
+*.log
+*.cache
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+

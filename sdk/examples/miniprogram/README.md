@@ -68,7 +68,7 @@ monitor.init({
 ### 手动追踪
 
 ```javascript
-import monitor from '../../src/miniprogram.js'
+const monitor = require('./miniprogram.js')
 
 // 手动捕获错误
 try {

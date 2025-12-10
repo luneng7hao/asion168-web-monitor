@@ -1,13 +1,16 @@
 // pages/about/about.js
-import monitor from '../../../src/miniprogram.js'
+const monitor = require('../../miniprogram.js')
 
 Page({
   onLoad() {
     console.log('关于页加载')
-    monitor.track('page_view', {
-      page: 'pages/about/about',
-      path: '/pages/about/about'
-    })
+    // 追踪页面访问（PV统计）
+    monitor.pageLoadStart()
+  },
+
+  onReady() {
+    // 页面加载完成（性能统计）
+    monitor.pageLoadEnd()
   }
 })
 

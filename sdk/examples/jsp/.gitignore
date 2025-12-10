@@ -1,0 +1,24 @@
+# JSP 测试工程 .gitignore
+
+# 编译文件
+*.class
+*.jar
+*.war
+
+# IDE
+.idea/
+.vscode/
+*.iml
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Tomcat
+work/
+logs/
+temp/
+

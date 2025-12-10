@@ -1,11 +1,17 @@
 // app.js
-import monitor from '../../src/miniprogram.js'
+const monitor = require('./miniprogram.js')
 
 // 初始化监控 SDK
+// 注意：小程序无法访问 localhost，请使用以下方式之一：
+// 1. 使用真实 IP 地址（如：http://192.168.1.100:3000/api）
+// 2. 使用域名（需要在微信公众平台配置合法域名）
+// 3. 在开发者工具中勾选"不校验合法域名"（仅开发环境）
 monitor.init({
-  apiUrl: 'http://localhost:3000/api',
-  projectId: 'project-miniprogram-test-001',
-  userId: 'miniprogram-user-001',
+  // 开发环境：使用本机 IP 地址（在命令行运行 ipconfig 获取）
+  // 例如：http://172.19.160.1:3000/api
+  apiUrl: 'http://localhost:3000/api',  // ⚠️ 请改为真实 IP 或域名
+  projectId: '001',
+  userId: 'miniprogram',
   enableError: true,
   enablePerformance: true,
   enableBehavior: true,

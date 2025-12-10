@@ -1,5 +1,5 @@
 // pages/index/index.js
-import monitor from '../../../src/miniprogram.js'
+const monitor = require('../../miniprogram.js')
 
 Page({
   data: {
@@ -8,11 +8,13 @@ Page({
 
   onLoad() {
     console.log('首页加载')
-    // 追踪页面访问
-    monitor.track('page_view', {
-      page: 'pages/index/index',
-      path: '/pages/index/index'
-    })
+    // 追踪页面访问（PV统计）
+    monitor.pageLoadStart()
+  },
+
+  onReady() {
+    // 页面加载完成（性能统计）
+    monitor.pageLoadEnd()
   },
 
   onShow() {

@@ -65,6 +65,7 @@ interface ApiData {
 declare const wx: any
 declare const getApp: () => any
 declare const getCurrentPages: () => any[]
+declare const module: any
 
 class MiniProgramMonitor {
   private config: MonitorConfig
@@ -76,37 +77,16 @@ class MiniProgramMonitor {
   private pageStartTime: number = 0
   private initialized = false
 
-  constructor(config: MonitorConfig) {
-    // 验证必需参数
-    if (!config.projectId || !config.projectId.trim()) {
-      console.error('MiniProgramMonitor SDK: projectId 是必需的，请在管理端创建项目后获取项目ID')
+  constructor(config?: MonitorConfig) {
+    // 如果传入了配置，则初始化
+    if (config) {
+      this.init(config)
+    } else {
+      // 未传入配置，创建未初始化的实例
       this.initialized = false
-      this.config = config as MonitorConfig
+      this.config = {} as MonitorConfig
       this.sessionId = ''
-      return
     }
-    
-    if (!config.apiUrl || !config.apiUrl.trim()) {
-      console.error('MiniProgramMonitor SDK: apiUrl 是必需的')
-      this.initialized = false
-      this.config = config as MonitorConfig
-      this.sessionId = ''
-      return
-    }
-    
-    this.config = {
-      enableError: true,
-      enablePerformance: true,
-      enableBehavior: true,
-      enableApi: true,
-      sampleRate: 1,
-      ...config
-    }
-    
-    this.sessionId = this.generateSessionId()
-    this.initialized = true
-    this.initSystemInfo()
-    this.init()
   }
 
   private generateSessionId(): string {
@@ -125,7 +105,7 @@ class MiniProgramMonitor {
     }
   }
 
-  private init() {
+  private setupMonitors() {
     if (!this.initialized) return
     
     if (this.config.enableError) {
@@ -205,6 +185,42 @@ class MiniProgramMonitor {
     // 需要在 App 和 Page 生命周期中调用
   }
 
+  // 检查是否是监控 SDK 自身的请求
+  private isMonitorRequest(url: string): boolean {
+    if (!url || !this.config || !this.config.apiUrl) return false
+    
+    // 过滤监控 SDK 自身的上报请求
+    const apiUrl = this.config.apiUrl
+    // 移除查询参数和 hash，只比较基础 URL
+    const urlWithoutQuery = url.split('?')[0].split('#')[0]
+    const apiUrlWithoutQuery = apiUrl.split('?')[0].split('#')[0]
+    
+    // 检查完整 URL 是否以 apiUrl 开头（更精确的匹配）
+    if (urlWithoutQuery.startsWith(apiUrlWithoutQuery)) {
+      // 进一步检查是否是监控接口（包括带查询参数的情况）
+      if (url.includes('/error/report') ||
+          url.includes('/performance/report') ||
+          url.includes('/behavior/report') ||
+          url.includes('/api/report')) {
+        return true
+      }
+    }
+    
+    // 兼容性检查：即使 URL 不完全匹配，只要包含监控接口路径也认为是监控请求
+    // 这可以处理 URL 拼接错误的情况（如 /api/api/report）
+    if (url.includes('/error/report') ||
+        url.includes('/performance/report') ||
+        url.includes('/behavior/report') ||
+        url.includes('/api/report')) {
+      // 进一步确认是监控相关的 URL（避免误判）
+      if (url.includes(apiUrlWithoutQuery) || url.includes('/api/')) {
+        return true
+      }
+    }
+    
+    return false
+  }
+
   // 接口监控
   private initApiMonitor() {
     // 拦截 wx.request
@@ -215,6 +231,11 @@ class MiniProgramMonitor {
       const startTime = Date.now()
       const url = options.url || ''
       const method = (options.method || 'GET').toUpperCase()
+
+      // 跳过监控 SDK 自身的请求
+      if (self.isMonitorRequest(url)) {
+        return self.originalRequest.call(wx, options)
+      }
 
       // 添加成功回调
       const originalSuccess = options.success
@@ -279,6 +300,11 @@ class MiniProgramMonitor {
   }
 
   private trackBehavior(type: string, data?: any) {
+    if (!this.initialized || !this.config || !this.config.projectId) {
+      console.warn('MiniProgramMonitor SDK: SDK 未正确初始化，行为追踪已跳过')
+      return
+    }
+    
     const pages = getCurrentPages()
     const currentPage = pages[pages.length - 1]
     const url = currentPage ? currentPage.route : 'unknown'
@@ -306,6 +332,11 @@ class MiniProgramMonitor {
       console.warn('MiniProgramMonitor SDK: SDK 未正确初始化，数据无法上报')
       return
     }
+    if (!this.config || !this.config.apiUrl) {
+      console.warn('MiniProgramMonitor SDK: 配置不完整，无法上报数据')
+      return
+    }
+    console.log('MiniProgramMonitor SDK: 准备上报数据', { endpoint, dataType: data.type || 'unknown' })
     this.queue.push({ endpoint, data })
     this.flush()
   }
@@ -314,23 +345,41 @@ class MiniProgramMonitor {
     if (this.isSending || this.queue.length === 0) return
     
     this.isSending = true
+    const self = this
     
     while (this.queue.length > 0) {
       const item = this.queue.shift()
       
       try {
+        // 构建完整 URL
+        const fullUrl = `${self.config.apiUrl}${item.endpoint}`
+        console.log('MiniProgramMonitor SDK: 发送数据', { url: fullUrl, endpoint: item.endpoint })
+        
+        // 直接使用原始 request，避免被拦截导致无限循环
+        // 因为 flush 中的请求都是 SDK 自身的上报请求
         await new Promise<void>((resolve, reject) => {
-          wx.request({
-            url: `${this.config.apiUrl}${item.endpoint}`,
+          // 使用原始 request，不会被拦截
+          const requestMethod = self.originalRequest || wx.request
+          
+          if (!requestMethod) {
+            console.error('MiniProgramMonitor SDK: wx.request 不可用')
+            reject(new Error('wx.request 不可用'))
+            return
+          }
+          
+          requestMethod.call(wx, {
+            url: fullUrl,
             method: 'POST',
             header: {
               'Content-Type': 'application/json'
             },
             data: item.data,
-            success: () => {
+            success: (res: any) => {
+              console.log('MiniProgramMonitor SDK: 数据上报成功', { url: fullUrl, status: res.statusCode })
               resolve()
             },
             fail: (err: any) => {
+              console.error('MiniProgramMonitor SDK: 数据上报失败', { url: fullUrl, error: err })
               reject(err)
             }
           })
@@ -402,12 +451,58 @@ class MiniProgramMonitor {
     this.trackBehavior(event, data)
   }
 
-  // 获取监控实例（用于在页面中使用）
-  public static getInstance(): MiniProgramMonitor | null {
-    const app = getApp()
-    return app?.monitor || null
+  // 公共 init 方法，用于延迟初始化
+  public init(config: MonitorConfig) {
+    if (this.initialized) {
+      console.warn('MiniProgramMonitor: 已经初始化，将更新配置')
+    }
+    
+    // 验证必需参数
+    if (!config.projectId || !config.projectId.trim()) {
+      console.error('MiniProgramMonitor SDK: projectId 是必需的，请在管理端创建项目后获取项目ID')
+      return
+    }
+    
+    if (!config.apiUrl || !config.apiUrl.trim()) {
+      console.error('MiniProgramMonitor SDK: apiUrl 是必需的')
+      return
+    }
+    
+    this.config = {
+      enableError: true,
+      enablePerformance: true,
+      enableBehavior: true,
+      enableApi: true,
+      sampleRate: 1,
+      ...config
+    }
+    
+    this.sessionId = this.generateSessionId()
+    this.initialized = true
+    
+    // 确保 originalRequest 被初始化（即使 enableApi 为 false，也要保存原始方法）
+    this.originalRequest = wx.request
+    
+    console.log('MiniProgramMonitor SDK: 初始化成功', {
+      projectId: this.config.projectId,
+      apiUrl: this.config.apiUrl,
+      sessionId: this.sessionId,
+      enableError: this.config.enableError,
+      enablePerformance: this.config.enablePerformance,
+      enableBehavior: this.config.enableBehavior,
+      enableApi: this.config.enableApi
+    })
+    
+    this.initSystemInfo()
+    this.setupMonitors()
   }
 }
 
-export default MiniProgramMonitor
+// 创建单例实例（未初始化，需要调用 init 方法）
+const monitor = new MiniProgramMonitor()
+
+// 同时支持 ES6 模块和 CommonJS
+export default monitor
+module.exports = monitor
+module.exports.default = monitor
 

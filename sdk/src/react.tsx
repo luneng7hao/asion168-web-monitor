@@ -222,6 +222,11 @@ class ReactMonitor {
                              (target as HTMLVideoElement).src || 
                              (target as HTMLAudioElement).src || '';
           
+          // 关键修复：过滤 SDK 自身的上报请求，避免死循环
+          if (this.isMonitorRequest(resourceUrl)) {
+            return; // SDK 自身的请求失败，不进行错误上报，避免循环
+          }
+          
           // 检查是否在短时间内已经上报过相同的资源错误（去重）
           const errorKey = `resource:${resourceUrl}`;
           if (this.isDuplicateError(errorKey)) {
@@ -400,10 +405,23 @@ class ReactMonitor {
   private isMonitorRequest(url: string): boolean {
     if (!url || !this.config) return false;
     const apiUrl = this.config.apiUrl;
+    // 移除查询参数和 hash，只比较基础 URL
+    const urlWithoutQuery = url.split('?')[0].split('#')[0];
+    const apiUrlWithoutQuery = apiUrl.split('?')[0].split('#')[0];
     
-    // 过滤监控 SDK 自身的上报请求
-    if (url.startsWith(apiUrl) || 
-        url.includes('/error/report') || 
+    // 检查完整 URL 是否以 apiUrl 开头（更精确的匹配）
+    if (urlWithoutQuery.startsWith(apiUrlWithoutQuery)) {
+      // 进一步检查是否是监控接口（包括带查询参数的情况）
+      if (url.includes('/error/report') || 
+          url.includes('/performance/report') || 
+          url.includes('/behavior/report') || 
+          url.includes('/api/report')) {
+        return true;
+      }
+    }
+    
+    // 兼容性检查：即使 URL 不完全匹配，只要包含监控接口路径也认为是监控请求
+    if (url.includes('/error/report') || 
         url.includes('/performance/report') || 
         url.includes('/behavior/report') || 
         url.includes('/api/report')) {
@@ -492,7 +510,7 @@ class ReactMonitor {
           
           throw error;
         });
-    }
+    };
 
     const originalOpen = XMLHttpRequest.prototype.open;
     const originalSend = XMLHttpRequest.prototype.send;
@@ -656,7 +674,21 @@ class ReactMonitor {
       try {
         const img = new Image();
         const encodedData = encodeURIComponent(dataStr);
-        img.src = `${url}?data=${encodedData}`;
+        const fullUrl = `${url}?data=${encodedData}`;
+        
+        // 关键修复：添加错误处理，避免触发资源错误监控
+        img.onerror = () => {
+          // 静默失败，不触发全局错误监听
+          // 这是 SDK 自身的请求，失败不应该被当作资源错误上报
+        };
+        img.onload = () => {
+          // 成功加载，清理
+          setTimeout(() => {
+            img.src = '';
+          }, 100);
+        };
+        
+        img.src = fullUrl;
         setTimeout(() => {
           img.src = '';
         }, 1000);

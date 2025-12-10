@@ -1,18 +1,19 @@
 {
+  "extends": "./tsconfig.json",
   "compilerOptions": {
     "target": "ES2015",
-    "module": "ES2015",
+    "module": "CommonJS",
     "lib": ["ES2017", "DOM"],
-    "jsx": "react",
+    "jsx": "preserve",
     "declaration": true,
     "outDir": "./dist",
     "rootDir": "./src",
-    "strict": true,
+    "strict": false,
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true
   },
-  "include": ["src/**/*.ts", "src/**/*.tsx"],
+  "include": ["src/miniprogram.ts"],
   "exclude": ["node_modules", "dist"]
 }
 

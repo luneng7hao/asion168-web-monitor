@@ -1,5 +1,5 @@
 // pages/error-test/error-test.js
-import monitor from '../../../src/miniprogram.js'
+const monitor = require('../../miniprogram.js')
 
 Page({
   data: {
@@ -10,6 +10,13 @@ Page({
 
   onLoad() {
     console.log('错误测试页加载')
+    // 追踪页面访问（PV统计）
+    monitor.pageLoadStart()
+  },
+
+  onReady() {
+    // 页面加载完成（性能统计）
+    monitor.pageLoadEnd()
   },
 
   // 触发 JS 错误

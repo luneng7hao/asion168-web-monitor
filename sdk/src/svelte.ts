@@ -81,6 +81,11 @@ class SvelteMonitor {
                              (target as HTMLVideoElement).src || 
                              (target as HTMLAudioElement).src || '';
           
+          // 关键修复：过滤 SDK 自身的上报请求，避免死循环
+          if (this.isMonitorRequest(resourceUrl)) {
+            return; // SDK 自身的请求失败，不进行错误上报，避免循环
+          }
+          
           this.captureError(new Error(`资源加载失败: ${resourceUrl}`), {
             type: 'resource',
             tagName: target.tagName,
@@ -240,6 +245,53 @@ class SvelteMonitor {
     });
   }
 
+  // 检查是否是监控 SDK 自身的请求
+  private isMonitorRequest(url: string): boolean {
+    if (!url || !this.config) return false;
+    const apiUrl = this.config.apiUrl;
+    // 移除查询参数和 hash，只比较基础 URL
+    const urlWithoutQuery = url.split('?')[0].split('#')[0];
+    const apiUrlWithoutQuery = apiUrl.split('?')[0].split('#')[0];
+    
+    // 检查完整 URL 是否以 apiUrl 开头（更精确的匹配）
+    if (urlWithoutQuery.startsWith(apiUrlWithoutQuery)) {
+      // 进一步检查是否是监控接口（包括带查询参数的情况）
+      if (url.includes('/error/report') || 
+          url.includes('/performance/report') || 
+          url.includes('/behavior/report') || 
+          url.includes('/api/report')) {
+        return true;
+      }
+    }
+    
+    // 兼容性检查：即使 URL 不完全匹配，只要包含监控接口路径也认为是监控请求
+    if (url.includes('/error/report') || 
+        url.includes('/performance/report') || 
+        url.includes('/behavior/report') || 
+        url.includes('/api/report')) {
+      return true;
+    }
+    
+    // 过滤开发工具和热更新请求
+    if (url.includes('.hot-update.') ||
+        url.includes('/@vite/client') ||
+        url.includes('/@react-refresh') ||
+        url.includes('__vite_ping') ||
+        url.includes('__webpack_hmr') ||
+        url.includes('webpack-dev-server') ||
+        url.includes('sockjs-node') ||
+        url.startsWith('ws://') ||
+        url.startsWith('wss://') ||
+        url.startsWith('chrome-extension://') ||
+        url.startsWith('moz-extension://') ||
+        url.startsWith('safari-extension://') ||
+        url.startsWith('edge-extension://')) {
+      return true;
+    }
+    
+    return false;
+  }
+
   // API 监控
   private initApiMonitor() {
     const self = this;
@@ -249,6 +301,11 @@ class SvelteMonitor {
       const startTime = Date.now();
       const url = typeof args[0] === 'string' ? args[0] : (args[0] as Request).url;
       const method = (args[1]?.method || 'GET').toUpperCase();
+
+      // 跳过监控 SDK 自身的请求
+      if (self.isMonitorRequest(url)) {
+        return originalFetch.apply(this, args);
+      }
 
       return originalFetch.apply(this, args)
         .then((response) => {
@@ -264,7 +321,8 @@ class SvelteMonitor {
 
   private reportApi(url: string, method: string, status: number, responseTime: number) {
     if (Math.random() > (this.config.sampleRate || 1)) return;
-    if (url.includes(this.config.apiUrl)) return;
+    // 关键修复：使用 isMonitorRequest 方法，更精确地过滤 SDK 自身请求
+    if (this.isMonitorRequest(url)) return;
 
     this.send('/api/report', {
       url,
@@ -383,7 +441,21 @@ class SvelteMonitor {
       try {
         const img = new Image();
         const encodedData = encodeURIComponent(dataStr);
-        img.src = `${url}?data=${encodedData}`;
+        const fullUrl = `${url}?data=${encodedData}`;
+        
+        // 关键修复：添加错误处理，避免触发资源错误监控
+        img.onerror = () => {
+          // 静默失败，不触发全局错误监听
+          // 这是 SDK 自身的请求，失败不应该被当作资源错误上报
+        };
+        img.onload = () => {
+          // 成功加载，清理
+          setTimeout(() => {
+            img.src = '';
+          }, 100);
+        };
+        
+        img.src = fullUrl;
         setTimeout(() => {
           img.src = '';
         }, 1000);
