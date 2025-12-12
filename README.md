@@ -78,7 +78,7 @@ Asion168-web-monitor/
 │   │   ├── vue.ts       # Vue 插件
 │   │   ├── react.ts     # React 插件
 │   │   └── svelte.ts    # Svelte 插件
-│   ├── examples/        # 使用示例
+│   ├── examples/        # 使用示例（包含 Web、JSP、PHP、Vue、React、Svelte、小程序等测试工程）
 │   └── package.json
 └── README.md
 ```
@@ -266,6 +266,34 @@ MiniProgramMonitor.init({
   projectId: '001'
 })
 ```
+
+## 📚 测试工程示例
+
+项目提供了多个测试工程，方便快速上手和测试：
+
+### Web 测试工程
+
+- **`examples/web/`** - 原生 JavaScript 测试工程（适用于 HTML、JSP、PHP 等传统 Web 应用）
+- **`examples/jsp/`** - JSP 测试工程，演示如何在 JSP 项目中集成监控 SDK
+- **`examples/php/`** - PHP 测试工程，演示如何在 PHP 项目中集成监控 SDK
+
+### 框架测试工程
+
+- **`examples/vue3/`** - Vue 3 测试工程
+- **`examples/vue2/`** - Vue 2 测试工程
+- **`examples/react/`** - React 测试工程
+- **`examples/svelte/`** - Svelte 测试工程
+
+### 小程序测试工程
+
+- **`examples/miniprogram/`** - 微信小程序测试工程，演示小程序监控 SDK 的使用
+
+每个测试工程都包含：
+- 完整的集成示例
+- 错误测试页面
+- 性能测试页面
+- 行为追踪示例
+- 详细的 README 说明
 
 更多示例请查看 [sdk/examples](./sdk/examples/) 目录。
 

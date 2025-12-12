@@ -78,7 +78,7 @@ Asion168-web-monitor/
 │   │   ├── vue.ts       # Vue Plugin
 │   │   ├── react.ts     # React Plugin
 │   │   └── svelte.ts    # Svelte Plugin
-│   ├── examples/        # Usage Examples
+│   ├── examples/        # Usage Examples (includes test projects for Web, JSP, PHP, Vue, React, Svelte, Mini Program, etc.)
 │   └── package.json
 └── README.md
 ```
@@ -266,6 +266,34 @@ MiniProgramMonitor.init({
   projectId: '001'
 })
 ```
+
+## 📚 Test Project Examples
+
+The project provides multiple test projects for quick start and testing:
+
+### Web Test Projects
+
+- **`examples/web/`** - Native JavaScript test project (for HTML, JSP, PHP and other traditional web applications)
+- **`examples/jsp/`** - JSP test project demonstrating how to integrate the monitoring SDK in JSP projects
+- **`examples/php/`** - PHP test project demonstrating how to integrate the monitoring SDK in PHP projects
+
+### Framework Test Projects
+
+- **`examples/vue3/`** - Vue 3 test project
+- **`examples/vue2/`** - Vue 2 test project
+- **`examples/react/`** - React test project
+- **`examples/svelte/`** - Svelte test project
+
+### Mini Program Test Project
+
+- **`examples/miniprogram/`** - WeChat Mini Program test project demonstrating the usage of the Mini Program monitoring SDK
+
+Each test project includes:
+- Complete integration examples
+- Error test pages
+- Performance test pages
+- Behavior tracking examples
+- Detailed README documentation
 
 For more examples, please check the [sdk/examples](./sdk/examples/) directory.
 
