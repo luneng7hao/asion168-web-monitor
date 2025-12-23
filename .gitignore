@@ -26,3 +26,27 @@ Thumbs.db
 # TypeScript
 *.tsbuildinfo
 
+
+sdk/examples/build-examples.sh
+
+sdk/examples/deploy.sh
+
+sdk/examples/docker-compose.yml
+
+sdk/examples/Dockerfile.php
+
+sdk/examples/Dockerfile.tomcat
+
+sdk/examples/examples.zip
+
+sdk/examples/nginx/conf.d/default.conf
+
+sdk/examples/php/php.ini
+
+sdk/examples/test-local.sh
+
+sdk/examples/test-local.bat
+
+sdk/examples/README.DOCKER.md
+
+sdk/examples/nginx/nginx.conf

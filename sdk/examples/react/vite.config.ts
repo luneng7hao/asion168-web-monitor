@@ -11,7 +11,7 @@ export default defineConfig({
   ],
   resolve: {
     alias: {
-      '@monitor/react': path.resolve(__dirname, '../../src/react.ts')
+      '@monitor/react': path.resolve(__dirname, '../../src/react.tsx')
     },
     extensions: ['.tsx', '.ts', '.jsx', '.js', '.json']
   },
@@ -27,6 +27,9 @@ export default defineConfig({
       },
     },
     include: ['react', 'react-dom', 'react-router-dom']
+  },
+  build: {
+    outDir: "dist",
   },
   server: {
     port: 5174,

@@ -9,6 +9,11 @@ export default defineConfig({
     port: 5177,
     open: true
   },
+  build: {
+    outDir: 'dist',
+    assetsDir: 'assets',
+    sourcemap: false
+  },
   resolve: {
     alias: {
       '@monitor': path.resolve(__dirname, '../../src')

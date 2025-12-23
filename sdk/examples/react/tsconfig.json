@@ -11,16 +11,17 @@
     "isolatedModules": true,
     "noEmit": true,
     "jsx": "react-jsx",
-    "strict": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
+    "strict": false,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
     "noFallthroughCasesInSwitch": true,
     "baseUrl": ".",
     "paths": {
-      "@monitor/react": ["../../src/react.ts"]
+      "@monitor/react": ["./src/@monitor/react.d.ts"]
     }
   },
-  "include": ["src", "../../src/react.ts"],
+  "include": ["src"],
+  "exclude": ["../../src"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }
 

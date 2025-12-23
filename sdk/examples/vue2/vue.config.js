@@ -42,6 +42,7 @@ module.exports = {
     config.resolve.extensions
       .merge(['.ts', '.tsx', '.js', '.jsx', '.vue', '.json']);
   },
+  outputDir: 'dist',
   devServer: {
     port: 5172,
     open: true

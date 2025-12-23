@@ -13,6 +13,9 @@ export default defineConfig({
       '@monitor/svelte': path.resolve(__dirname, '../../src/svelte.ts')
     }
   },
+  build: {
+    outDir: 'dist',
+  },
   server: {
     port: 5176,
     strictPort: false, // 如果端口被占用，自动尝试下一个端口

@@ -5,6 +5,12 @@
 
 import React, { Component, ErrorInfo, ReactNode } from 'react';
 
+// 扩展 XMLHttpRequest 类型以支持监控属性
+interface XMLHttpRequestWithMonitor extends XMLHttpRequest {
+  _monitorUrl?: string;
+  _monitorMethod?: string;
+}
+
 export interface MonitorConfig {
   apiUrl: string;
   projectId: string;
@@ -464,10 +470,10 @@ class ReactMonitor {
     const originalFetch = window.fetch;
     const self = this;
 
-    window.fetch = function(...args) {
+    window.fetch = function(...args: Parameters<typeof fetch>) {
       const startTime = Date.now();
-      const url = typeof args[0] === 'string' ? args[0] : args[0].url;
-      const method = args[1]?.method || 'GET';
+      const url = typeof args[0] === 'string' ? args[0] : (args[0] as Request).url;
+      const method = (args[1] as RequestInit | undefined)?.method || 'GET';
 
       if (self.isMonitorRequest(url)) {
         return originalFetch.apply(this, args);
@@ -515,19 +521,19 @@ class ReactMonitor {
     const originalOpen = XMLHttpRequest.prototype.open;
     const originalSend = XMLHttpRequest.prototype.send;
 
-    XMLHttpRequest.prototype.open = function(method: string, url: string | URL, ...args: any[]) {
+    XMLHttpRequest.prototype.open = function(this: XMLHttpRequestWithMonitor, method: string, url: string | URL, async?: boolean, username?: string | null, password?: string | null) {
       this._monitorUrl = typeof url === 'string' ? url : url.toString();
       this._monitorMethod = method;
-      return originalOpen.apply(this, [method, url, ...args]);
+      return originalOpen.call(this, method, url, async ?? true, username, password);
     };
 
-    XMLHttpRequest.prototype.send = function(...args: any[]) {
+    XMLHttpRequest.prototype.send = function(this: XMLHttpRequestWithMonitor, body?: Document | XMLHttpRequestBodyInit | null) {
       const startTime = Date.now();
-      const url = this._monitorUrl;
-      const method = this._monitorMethod;
+      const url = this._monitorUrl || '';
+      const method = this._monitorMethod || 'GET';
 
       if (self.isMonitorRequest(url)) {
-        return originalSend.apply(this, args);
+        return originalSend.call(this, body);
       }
 
       this.addEventListener('loadend', function() {
@@ -547,7 +553,7 @@ class ReactMonitor {
         }
       });
 
-      return originalSend.apply(this, args);
+      return originalSend.call(this, body);
     };
   }
 
