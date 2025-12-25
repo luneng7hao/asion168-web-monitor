@@ -6,8 +6,11 @@ import Behavior from '../views/Behavior.vue'
 import Api from '../views/Api.vue'
 import Logs from '../views/Logs.vue'
 
+// 从环境变量读取 base，默认为 '/'
+const base = import.meta.env.VITE_BASE || '/'
+
 const router = createRouter({
-  history: createWebHistory(),
+  history: createWebHistory(base),
   routes: [
     {
       path: '/',

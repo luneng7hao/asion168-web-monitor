@@ -42,6 +42,8 @@ module.exports = {
     config.resolve.extensions
       .merge(['.ts', '.tsx', '.js', '.jsx', '.vue', '.json']);
   },
+  // 从环境变量读取 publicPath，默认为 '/'
+  publicPath: process.env.VUE_APP_BASE || '/',
   outputDir: 'dist',
   devServer: {
     port: 5172,

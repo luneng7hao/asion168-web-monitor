@@ -1,4 +1,5 @@
 import { Routes, Route, Link, useLocation } from 'react-router-dom'
+import { useEffect } from 'react'
 import Home from './views/Home'
 import About from './views/About'
 import ErrorTest from './views/ErrorTest'
@@ -7,6 +8,10 @@ import './App.css'
 
 function App() {
   const location = useLocation()
+
+  useEffect(() => {
+    console.log('VITE_BASE:', import.meta.env.VITE_BASE)
+  }, [])
 
   return (
     <div className="app">

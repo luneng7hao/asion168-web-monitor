@@ -27,8 +27,11 @@ const routes = [
   }
 ];
 
+// 从环境变量读取 base，默认为 '/'
+const base = import.meta.env.VITE_BASE || '/'
+
 const router = createRouter({
-  history: createWebHistory(),
+  history: createWebHistory(base),
   routes
 });
 

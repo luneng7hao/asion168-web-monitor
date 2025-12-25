@@ -4,7 +4,8 @@
   "description": "Vue 2 监控 SDK 测试示例",
   "scripts": {
     "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build"
+    "build": "vue-cli-service build",
+    "build:sit": "vue-cli-service build --mode sit"
   },
   "dependencies": {
     "vue": "^2.6.14",

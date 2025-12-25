@@ -30,9 +30,12 @@ const routes = [
   }
 ];
 
+// 从环境变量读取 base，默认为 '/'
+const base = process.env.VUE_APP_BASE || '/'
+
 const router = new VueRouter({
   mode: 'history',
-  base: process.env.BASE_URL,
+  base: base,
   routes
 });
 

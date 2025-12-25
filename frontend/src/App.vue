@@ -77,7 +77,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed,onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { ElMessageBox, ElMessage } from 'element-plus'
 import { DataBoard, Warning, Timer, User, Connection, Document } from '@element-plus/icons-vue'
@@ -86,7 +86,9 @@ import { useRouter } from 'vue-router'
 
 const route = useRoute()
 const router = useRouter()
-
+onMounted(() => {
+  console.log('VITE_BASE',import.meta.env.VITE_BASE)
+})
 const activeMenu = computed(() => route.path)
 
 const handleClearData = async () => {

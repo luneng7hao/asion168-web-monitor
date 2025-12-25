@@ -1,13 +1,21 @@
 <script>
+  import { onMount } from 'svelte'
   import { Router, Route } from 'svelte-routing'
   import Home from './views/Home.svelte'
   import About from './views/About.svelte'
   import ErrorTest from './views/ErrorTest.svelte'
   import Performance from './views/Performance.svelte'
   import NavBar from './components/NavBar.svelte'
+  
+  // 从环境变量读取 base，默认为 '/'
+  const base = import.meta.env.VITE_BASE || '/'
+  
+  onMount(() => {
+    console.log('VITE_BASE:', import.meta.env.VITE_BASE)
+  })
 </script>
 
-<Router>
+<Router url={base}>
   <div class="app">
     <NavBar />
     <main class="main-content">
