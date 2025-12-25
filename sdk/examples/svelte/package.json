@@ -5,7 +5,6 @@
   "scripts": {
     "dev": "vite dev",
     "build": "npx vite build",
-    "build:sit": "npx vite build --mode sit",
     "preview": "vite preview"
   },
   "devDependencies": {

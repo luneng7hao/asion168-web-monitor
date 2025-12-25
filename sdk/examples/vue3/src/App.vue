@@ -20,10 +20,6 @@
 <script setup>
 import { onMounted } from 'vue'
 
-// Vue 3 Composition API
-onMounted(() => {
-  console.log('VITE_BASE:', import.meta.env.VITE_BASE)
-})
 </script>
 
 <style>

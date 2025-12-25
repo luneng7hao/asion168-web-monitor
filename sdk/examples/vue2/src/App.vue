@@ -27,9 +27,6 @@ export default {
   components: {
     ErrorBoundary
   },
-  mounted() {
-    console.log('VUE_APP_BASE:', process.env.VUE_APP_BASE)
-  }
 };
 </script>
 

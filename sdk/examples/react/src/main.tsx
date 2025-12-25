@@ -24,10 +24,8 @@ function RouterMonitor() {
 }
 
 // 初始化监控 SDK
-// 从环境变量读取 apiUrl，默认为本地开发地址
-const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000/api'
 monitor.init({
-  apiUrl: apiUrl, // 注意：后端有全局前缀 /api
+  apiUrl: 'http://localhost:3000/api', // 注意：后端有全局前缀 /api
   projectId: '001',
   userId: 'react',
   enableError: true,
@@ -37,13 +35,10 @@ monitor.init({
   sampleRate: 1
 })
 
-// 从环境变量读取 base，默认为 '/'
-const basename = import.meta.env.VITE_BASE || '/'
-
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <ErrorBoundary>
-      <BrowserRouter basename={basename}>
+      <BrowserRouter>
         <RouterMonitor />
         <App />
       </BrowserRouter>
